@@ -14,13 +14,19 @@ const build = async (pkgJson) => {
     return;
   }
   const extensions = ['.mjs', '.js', '.jsx', '.ts', 'tsx'];
-  const { source, main, module } = pkgJson;
+  const {
+    source, main, module, dependencies = {}, peerDependencies = {},
+  } = pkgJson;
   const inputOptions = {
     input: join(rootPath, source),
     plugins: [
-      typescript(),
-      babel({
-        exclude: 'node_modules/**',
+      // TODO customize tsconfig
+      typescript({
+        tsconfigDefaults: {
+          compilerOptions: {
+            declaration: true,
+          },
+        },
       }),
       resolve({
         extensions,
@@ -28,7 +34,11 @@ const build = async (pkgJson) => {
       commonjs({
         extensions,
       }),
+      babel({
+        exclude: 'node_modules/**',
+      }),
     ],
+    external: [...Object.keys(dependencies), ...Object.keys(peerDependencies)],
   };
   const outputOptions = [
     {
@@ -56,5 +66,4 @@ const build = async (pkgJson) => {
 
 const pkgPath = join(rootPath, 'package.json');
 const pkgJson = existsSync(pkgPath) ? JSON.parse(readFileSync(pkgPath, 'utf8')) : undefined;
-
 build(pkgJson).catch(console.log);
