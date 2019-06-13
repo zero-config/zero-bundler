@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { rollup } from 'rollup';
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
@@ -7,24 +6,45 @@ import typescript from 'rollup-plugin-typescript2';
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs';
 
-const rootPath = process.cwd();
+const defaultEntry = (rootPath, source) => {
+  if (source) {
+    return join(rootPath, source);
+  }
+  const srcIndexJS = join(rootPath, 'src/index.js');
+  const srcIndexJSX = join(rootPath, 'src/index.jsx');
+  const srcIndexTs = join(rootPath, 'src/index.ts');
+  const srcIndexTSX = join(rootPath, 'src/index.tsx');
+  const res = [srcIndexJS, srcIndexJSX, srcIndexTs, srcIndexTSX].find(existsSync);
+  if (res) {
+    return res;
+  }
+  throw new Error('Please set source in package.json');
+};
 
-const build = async (pkgJson) => {
+const build = async (rootPath) => {
+  const pkgPath = join(rootPath, 'package.json');
+  const pkgJson = existsSync(pkgPath) ? JSON.parse(readFileSync(pkgPath, 'utf8')) : undefined;
   if (!pkgJson) {
     return;
   }
   const extensions = ['.mjs', '.js', '.jsx', '.ts', 'tsx'];
   const {
-    source, main, module, dependencies = {}, peerDependencies = {},
+    source, main, module, umd, dependencies = {}, peerDependencies = {},
   } = pkgJson;
   const inputOptions = {
-    input: join(rootPath, source),
+    input: defaultEntry(rootPath, source),
     plugins: [
-      // TODO customize tsconfig
       typescript({
         tsconfigDefaults: {
           compilerOptions: {
             declaration: true,
+          },
+        },
+        include: ['*.ts+(|x)', '**/*.ts+(|x)'],
+        exclude: ['*.d.ts', '**/*.d.ts'],
+        tsconfigOverride: {
+          compilerOptions: {
+            target: 'esnext',
           },
         },
       }),
@@ -43,7 +63,7 @@ const build = async (pkgJson) => {
   const outputOptions = [
     {
       format: 'cjs',
-      file: join(rootPath, main),
+      file: join(rootPath, main || 'dist/index.js'),
     },
   ];
 
@@ -51,6 +71,12 @@ const build = async (pkgJson) => {
     outputOptions.push({
       format: 'esm',
       file: join(rootPath, module),
+    });
+  }
+  if (umd) {
+    outputOptions.push({
+      format: 'umd',
+      file: join(rootPath, umd),
     });
   }
 
@@ -63,7 +89,4 @@ const build = async (pkgJson) => {
   );
 };
 
-
-const pkgPath = join(rootPath, 'package.json');
-const pkgJson = existsSync(pkgPath) ? JSON.parse(readFileSync(pkgPath, 'utf8')) : undefined;
-build(pkgJson).catch(console.log);
+export default build;

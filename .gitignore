@@ -62,3 +62,5 @@ typings/
 
 .rpt2*
 lib/*
+dist/
+.DS_Store

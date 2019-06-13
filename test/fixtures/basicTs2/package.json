@@ -1,0 +1,4 @@
+{
+  "main": "dist/basicTs2.js",
+  "module": "dist/basicTs2.m.js"
+}
