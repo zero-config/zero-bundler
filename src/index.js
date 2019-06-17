@@ -38,6 +38,7 @@ const build = async (rootPath) => {
         tsconfigDefaults: {
           compilerOptions: {
             declaration: true,
+            jsx: 'react',
           },
         },
         include: ['*.ts+(|x)', '**/*.ts+(|x)'],

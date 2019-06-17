@@ -5,12 +5,10 @@
   "author": "Victor Wang <wang_shaojie@icloud.com>",
   "license": "MIT",
   "private": false,
-  "main": "lib/index.js",
-  "bin": {
-    "libpacker": "lib/cli.js"
-  },
+  "main": "dist/index.js",
+  "bin": "dist/cli.js",
   "scripts": {
-    "build": "babel src -d lib"
+    "build": "babel src -d dist"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
