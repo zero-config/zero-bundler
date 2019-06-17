@@ -1,6 +1,6 @@
 {
   "name": "libpacker",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "repository": "https://github.com/beizhedenglong/libpacker.git",
   "author": "Victor Wang <wang_shaojie@icloud.com>",
   "license": "MIT",
