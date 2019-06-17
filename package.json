@@ -6,7 +6,9 @@
   "license": "MIT",
   "private": false,
   "main": "lib/index.js",
-  "bin": "./lib/cli.js",
+  "bin": {
+    "libpacker": "lib/cli.js"
+  },
   "scripts": {
     "build": "babel src -d lib"
   },
