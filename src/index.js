@@ -27,7 +27,6 @@ const build = async (rootPath) => {
   if (!pkgJson) {
     return;
   }
-  const extensions = ['.mjs', '.js', '.jsx', '.ts', 'tsx'];
   const {
     source, main, module, umd, dependencies = {}, peerDependencies = {},
   } = pkgJson;
@@ -49,17 +48,23 @@ const build = async (rootPath) => {
           },
         },
       }),
-      resolve({
-        extensions,
-      }),
-      commonjs({
-        extensions,
-      }),
       babel({
         exclude: 'node_modules/**',
       }),
+      resolve({
+        mainFields: ['module', 'jsnext', 'main'],
+      }),
+      commonjs(
+        {
+          include: /\/node_modules\//,
+        },
+      ),
     ],
-    external: [...Object.keys(dependencies), ...Object.keys(peerDependencies)],
+    external: (id) => {
+      const externals = [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
+      const externalPattern = new RegExp(`^(${externals.join('|')})($|/)`);
+      return externalPattern.test(id);
+    },
   };
   const outputOptions = [
     {
