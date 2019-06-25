@@ -57,8 +57,8 @@ const build = async (rootPath) => {
       babel({
         exclude: 'node_modules/**',
         presets: [
-          '@babel/preset-env',
-          '@babel/preset-react',
+          [require.resolve('@babel/preset-env'), { modules: false }],
+          require.resolve('@babel/preset-react'),
         ],
         // https://github.com/rollup/rollup-plugin-babel/issues/274#issuecomment-441611857
         extensions,
