@@ -1,9 +1,10 @@
+import { DEFAULT_EXTENSIONS } from '@babel/core';
 import { rollup } from 'rollup';
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
-import { join } from 'path';
+import { join, extname } from 'path';
 import { existsSync, readFileSync } from 'fs';
 
 const defaultEntry = (rootPath, source) => {
@@ -21,6 +22,10 @@ const defaultEntry = (rootPath, source) => {
   throw new Error('Please set source in package.json');
 };
 
+const isTsFile = p => (extname(p) === '.ts') || (extname(p) === '.tsx');
+
+const extensions = [...DEFAULT_EXTENSIONS, '.ts', '.tsx'];
+
 const build = async (rootPath) => {
   const pkgPath = join(rootPath, 'package.json');
   const pkgJson = existsSync(pkgPath) ? JSON.parse(readFileSync(pkgPath, 'utf8')) : undefined;
@@ -30,10 +35,11 @@ const build = async (rootPath) => {
   const {
     source, main, module, umd, dependencies = {}, peerDependencies = {},
   } = pkgJson;
+  const entry = defaultEntry(rootPath, source);
   const inputOptions = {
-    input: defaultEntry(rootPath, source),
+    input: entry,
     plugins: [
-      typescript({
+      isTsFile(entry) && typescript({
         tsconfigDefaults: {
           compilerOptions: {
             declaration: true,
@@ -50,15 +56,19 @@ const build = async (rootPath) => {
       }),
       babel({
         exclude: 'node_modules/**',
+        presets: [
+          '@babel/preset-env',
+          '@babel/preset-react',
+        ],
+        // https://github.com/rollup/rollup-plugin-babel/issues/274#issuecomment-441611857
+        extensions,
       }),
       resolve({
         mainFields: ['module', 'jsnext', 'main'],
       }),
-      commonjs(
-        {
-          include: /\/node_modules\//,
-        },
-      ),
+      commonjs({
+        include: /\/node_modules\//,
+      }),
     ],
     external: (id) => {
       const externals = [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
