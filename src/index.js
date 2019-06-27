@@ -60,6 +60,13 @@ const build = async (rootPath) => {
           [require.resolve('@babel/preset-env'), { modules: false }],
           require.resolve('@babel/preset-react'),
         ],
+        plugins: [
+          require.resolve('babel-plugin-transform-async-to-promises'),
+          [
+            require.resolve('@babel/plugin-proposal-class-properties'),
+            { loose: true },
+          ],
+        ],
         // https://github.com/rollup/rollup-plugin-babel/issues/274#issuecomment-441611857
         extensions,
       }),
