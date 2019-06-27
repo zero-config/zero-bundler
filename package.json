@@ -1,12 +1,14 @@
 {
-  "name": "libpacker",
+  "name": "zero-bundler",
   "version": "0.0.13",
   "repository": "https://github.com/beizhedenglong/libpacker.git",
   "author": "Victor Wang <wang_shaojie@icloud.com>",
   "license": "MIT",
   "private": false,
   "main": "dist/index.js",
-  "bin": "dist/cli.js",
+  "bin": {
+    "zero": "dist/cli.js"
+  },
   "scripts": {
     "build": "babel src -d dist"
   },
