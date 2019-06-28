@@ -4,6 +4,7 @@ import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
+import json from 'rollup-plugin-json';
 import { join, extname } from 'path';
 import { existsSync, readFileSync } from 'fs';
 
@@ -76,6 +77,7 @@ const build = async (rootPath) => {
       commonjs({
         include: /\/node_modules\//,
       }),
+      json(),
     ],
     external: (id) => {
       const externals = [...Object.keys(dependencies), ...Object.keys(peerDependencies)];
