@@ -17,3 +17,4 @@ Update your `package.json`:
 }
 
 ```
+Then run `yarn build`.
