@@ -34,7 +34,7 @@ const build = async (rootPath) => {
     return;
   }
   const {
-    source, main, module, umd, dependencies = {}, peerDependencies = {},
+    source, main, module, dependencies = {}, peerDependencies = {},
   } = pkgJson;
   const entry = defaultEntry(rootPath, source);
   const inputOptions = {
@@ -98,12 +98,13 @@ const build = async (rootPath) => {
       file: join(rootPath, module),
     });
   }
-  if (umd) {
-    outputOptions.push({
-      format: 'umd',
-      file: join(rootPath, umd),
-    });
-  }
+  // TODO
+  // if (umd) {
+  //   outputOptions.push({
+  //     format: 'umd',
+  //     file: join(rootPath, umd),
+  //   });
+  // }
 
   // create a bundle
   const bundle = await rollup(inputOptions);
