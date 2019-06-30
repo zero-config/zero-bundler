@@ -8,7 +8,7 @@ Zero config bundler for npm package. Support custom `babel config` and `typescri
 Update your `package.json`:
 ```json
 {
-  "source": "./src/index.js", // Entry file
+  "source": "./src/index.js", // Entry file(TS file end with .ts/.tsx)
   "main": "dist/index.js", // Output commonjs module
   "modules": "dist/index.m.js", // Output ES module
   "scripts": {
