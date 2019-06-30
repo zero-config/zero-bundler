@@ -1,5 +1,5 @@
 # Zero Bundler
-Zero config bundler for npm package.
+Zero config bundler for npm package. Support custom `babel config` and `typescript config`.
 
 ## Installation
 `yarn add zero-bundler --dev`
